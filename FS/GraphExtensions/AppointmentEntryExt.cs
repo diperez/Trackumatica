@@ -26,9 +26,7 @@ namespace Tracumatica
             {
                 FSAppointment fsAppointmentRow = Base.AppointmentSelected.Current;
 
-                if (fsAppointmentRow != null
-                    && (fsAppointmentRow.MapLatitude == null
-                        || fsAppointmentRow.MapLongitude == null))
+                if (fsAppointmentRow != null)
                 {
                     try
                     {
