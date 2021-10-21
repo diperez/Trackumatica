@@ -14,6 +14,7 @@ using PX.Data;
 using PX.Data.Webhooks;
 using PX.FS;
 using PX.Objects.EP;
+using PX.Objects.FS;
 using PX.SM;
 
 namespace Tracumatica
@@ -64,6 +65,11 @@ namespace Tracumatica
         public List<Location> Waypoints { get; set; }
     }
 
+    public static class CustomStatus
+    {
+        public const string Traveling = "T";
+        public class traveling : PX.Data.BQL.BqlString.Constant<traveling> { public traveling() : base(Traveling) { } }
+    }
     public class TrackWebHookHandler : IWebhookHandler
     {
         public async Task<IHttpActionResult> ProcessRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -85,8 +91,11 @@ namespace Tracumatica
 
                     //if (secret != "secretValue") return new StatusCodeResult(System.Net.HttpStatusCode.Unauthorized, request);
 
-                    DayOfWeek dayOfWeek = DateTime.Now.DayOfWeek;
+                    var today = DateTime.Now;
+                    var todayat23 = new DateTime(today.Year, today.Month, today.Day, 23, 59, 59);
+                    DayOfWeek dayOfWeek = today.DayOfWeek;
                     Guid? currentTrackingID = null;
+                    Guid gUid = Guid.Parse(parameters.Id);
 
                     var fsGPSTrackingRequestRows = 
                     PXSelectJoin<FSGPSTrackingRequest,
@@ -94,7 +103,7 @@ namespace Tracumatica
                         On<
                             Users.username, Equal<FSGPSTrackingRequest.userName>>>,
                     Where<
-                        Users.pKID, Equal<Required<Users.pKID>>>>.Select(graph, Guid.Parse(parameters.Id));
+                        Users.pKID, Equal<Required<Users.pKID>>>>.Select(graph, gUid);
 
                     foreach (FSGPSTrackingRequest fsGPSTrackingRequestRow in fsGPSTrackingRequestRows)
                     {
@@ -151,19 +160,51 @@ namespace Tracumatica
                             break;
                         }
                     }
-                    
 
-                    FSGPSTrackingHistory latestLocationRow = (FSGPSTrackingHistory)
+                    MapLocation returnLocation = new MapLocation();
+                    returnLocation.Id = parameters.Id;
+                    returnLocation.CompanyId = parameters.CompanyId;
+
+                    FSGPSTrackingHistory latestLocationRow = 
+                    (FSGPSTrackingHistory)
                     PXSelect<FSGPSTrackingHistory,
                     Where<
                         FSGPSTrackingHistory.trackingID, Equal<Required<FSGPSTrackingHistory.trackingID>>>,
                     OrderBy<
                         Desc<FSGPSTrackingHistory.executionDate>>>.SelectWindowed(graph, 0, 1, currentTrackingID);
 
-                    MapLocation returnLocation = new MapLocation();
-                    returnLocation.Id = parameters.Id;
-                    returnLocation.CompanyId = parameters.CompanyId;
-                    returnLocation.LatestLocation = new Location { latitude = latestLocationRow.Latitude.ToString(), longitude = latestLocationRow .Longitude.ToString() };
+                    returnLocation.LatestLocation = new Location { latitude = latestLocationRow.Latitude.ToString(), longitude = latestLocationRow.Longitude.ToString() };
+
+                    var nextAppointments =
+                    PXSelectJoin<EPEmployee,
+                    InnerJoin<FSAppointmentEmployee,
+                        On<
+                            FSAppointmentEmployee.employeeID, Equal<EPEmployee.bAccountID>>,
+                    InnerJoin<FSAppointment,
+                        On<
+                            FSAppointment.appointmentID, Equal<FSAppointmentEmployee.appointmentID>>,
+                    LeftJoin<Users,
+                        On<
+                            EPEmployee.userID, Equal<Users.pKID>>>>>,
+                    Where<
+                        FSAppointment.status, Equal<CustomStatus.traveling>,
+                    And<
+                        Users.pKID, Equal<Required<Users.pKID>>,
+                    And2<
+                       Where<
+                            FSAppointment.scheduledDateTimeEnd, GreaterEqual<Required<FSAppointment.scheduledDateTimeEnd>>,
+                        And<
+                            FSAppointment.scheduledDateTimeBegin, LessEqual<Required<FSAppointment.scheduledDateTimeBegin>>>>,
+                        And<
+                            Where<FSAppointment.customerID, IsNotNull>>>>>,
+                    OrderBy<
+                        Asc<FSAppointment.scheduledDateTimeBegin>>>.Select(graph, gUid, today.Date, todayat23);
+
+                    foreach (PXResult<EPEmployee, FSAppointmentEmployee, FSAppointment, Users> row in nextAppointments)
+                    {
+                        FSAppointment app = (FSAppointment)row;
+                        returnLocation.Waypoints.Add(new Location { latitude = app.MapLatitude.ToString(), longitude = app.MapLongitude.ToString() });
+                    }
 
                     return new JsonTextActionResult(request, JsonConvert.SerializeObject(returnLocation));
                 }
