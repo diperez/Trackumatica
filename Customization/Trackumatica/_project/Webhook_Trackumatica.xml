@@ -1,0 +1,13 @@
+﻿<Webhook>
+    <data-set>
+        <relations format-version="3" relations-version="20160101" main-table="WebHook" />
+        <layout>
+            <table name="WebHook" />
+        </layout>
+        <data>
+            <WebHook>
+                <row WebHookID="7a204452-4271-4b0f-8358-0e49f7d65b9d" Name="Trackumatica" Handler="Tracumatica.TrackWebHookHandler" IsActive="1" IsSystem="0" RequestLogLevel="0" RequestRetainCount="10" NoteID="89bd522d-8532-ec11-9818-f859717b0a65" />
+            </WebHook>
+        </data>
+    </data-set>
+</Webhook>
