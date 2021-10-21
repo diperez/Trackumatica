@@ -86,7 +86,7 @@ namespace Tracumatica
                     //if (secret != "secretValue") return new StatusCodeResult(System.Net.HttpStatusCode.Unauthorized, request);
 
                     DayOfWeek dayOfWeek = DateTime.Now.DayOfWeek;
-                    string currentTrackingID = string.Empty;
+                    Guid? currentTrackingID = null;
 
                     var fsGPSTrackingRequestRows = 
                     PXSelectJoin<FSGPSTrackingRequest,
@@ -94,68 +94,66 @@ namespace Tracumatica
                         On<
                             Users.username, Equal<FSGPSTrackingRequest.userName>>>,
                     Where<
-                        Users.pKID, Equal<Required<Users.pKID>>>>.Select(graph, parameters.Id);
+                        Users.pKID, Equal<Required<Users.pKID>>>>.Select(graph, Guid.Parse(parameters.Id));
 
-                    if (fsGPSTrackingRequestRows != null && fsGPSTrackingRequestRows.Count > 0)
+                    foreach (FSGPSTrackingRequest fsGPSTrackingRequestRow in fsGPSTrackingRequestRows)
                     {
-                        foreach (FSGPSTrackingRequest fsGPSTrackingRequestRow in fsGPSTrackingRequestRows)
+                        switch (dayOfWeek)
                         {
-                            switch (dayOfWeek)
-                            {
-                                case DayOfWeek.Sunday:
-                                    if (fsGPSTrackingRequestRow.WeeklyOnDay1 == true)
-                                    {
-                                        currentTrackingID = fsGPSTrackingRequestRow.TrackingID.ToString();
-                                    }
-                                    break;
-                                case DayOfWeek.Monday:
-                                    if (fsGPSTrackingRequestRow.WeeklyOnDay2 == true)
-                                    {
-                                        currentTrackingID = fsGPSTrackingRequestRow.TrackingID.ToString();
-                                    }
-                                    break;
-                                case DayOfWeek.Tuesday:
-                                    if (fsGPSTrackingRequestRow.WeeklyOnDay3 == true)
-                                    {
-                                        currentTrackingID = fsGPSTrackingRequestRow.TrackingID.ToString();
-                                    }
-                                    break;
-                                case DayOfWeek.Wednesday:
-                                    if (fsGPSTrackingRequestRow.WeeklyOnDay4 == true)
-                                    {
-                                        currentTrackingID = fsGPSTrackingRequestRow.TrackingID.ToString();
-                                    }
-                                    break;
-                                case DayOfWeek.Thursday:
-                                    if (fsGPSTrackingRequestRow.WeeklyOnDay5 == true)
-                                    {
-                                        currentTrackingID = fsGPSTrackingRequestRow.TrackingID.ToString();
-                                    }
-                                    break;
-                                case DayOfWeek.Friday:
-                                    if (fsGPSTrackingRequestRow.WeeklyOnDay6 == true)
-                                    {
-                                        currentTrackingID = fsGPSTrackingRequestRow.TrackingID.ToString();
-                                    }
-                                    break;
-                                case DayOfWeek.Saturday:
-                                    if (fsGPSTrackingRequestRow.WeeklyOnDay7 == true)
-                                    {
-                                        currentTrackingID = fsGPSTrackingRequestRow.TrackingID.ToString();
-                                    }
-                                    break;
-                                default:
-                                    currentTrackingID = ((FSGPSTrackingRequest)fsGPSTrackingRequestRows[0]).TrackingID.ToString();
-                                    break;
-                            }
-                            if (currentTrackingID != string.Empty)
-                            {
+                            case DayOfWeek.Sunday:
+                                if (fsGPSTrackingRequestRow.WeeklyOnDay1 == true)
+                                {
+                                    currentTrackingID = fsGPSTrackingRequestRow.TrackingID;
+                                }
                                 break;
-                            }
+                            case DayOfWeek.Monday:
+                                if (fsGPSTrackingRequestRow.WeeklyOnDay2 == true)
+                                {
+                                    currentTrackingID = fsGPSTrackingRequestRow.TrackingID;
+                                }
+                                break;
+                            case DayOfWeek.Tuesday:
+                                if (fsGPSTrackingRequestRow.WeeklyOnDay3 == true)
+                                {
+                                    currentTrackingID = fsGPSTrackingRequestRow.TrackingID;
+                                }
+                                break;
+                            case DayOfWeek.Wednesday:
+                                if (fsGPSTrackingRequestRow.WeeklyOnDay4 == true)
+                                {
+                                    currentTrackingID = fsGPSTrackingRequestRow.TrackingID;
+                                }
+                                break;
+                            case DayOfWeek.Thursday:
+                                if (fsGPSTrackingRequestRow.WeeklyOnDay5 == true)
+                                {
+                                    currentTrackingID = fsGPSTrackingRequestRow.TrackingID;
+                                }
+                                break;
+                            case DayOfWeek.Friday:
+                                if (fsGPSTrackingRequestRow.WeeklyOnDay6 == true)
+                                {
+                                    currentTrackingID = fsGPSTrackingRequestRow.TrackingID;
+                                }
+                                break;
+                            case DayOfWeek.Saturday:
+                                if (fsGPSTrackingRequestRow.WeeklyOnDay7 == true)
+                                {
+                                    currentTrackingID = fsGPSTrackingRequestRow.TrackingID;
+                                }
+                                break;
+                            default:
+                                currentTrackingID = ((FSGPSTrackingRequest)fsGPSTrackingRequestRows[0]).TrackingID;
+                                break;
+                        }
+                        if (currentTrackingID != null)
+                        {
+                            break;
                         }
                     }
+                    
 
-                    FSGPSTrackingHistory latestLocationRow = 
+                    FSGPSTrackingHistory latestLocationRow = (FSGPSTrackingHistory)
                     PXSelect<FSGPSTrackingHistory,
                     Where<
                         FSGPSTrackingHistory.trackingID, Equal<Required<FSGPSTrackingHistory.trackingID>>>,
