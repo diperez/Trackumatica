@@ -70,13 +70,13 @@ function startTracking(data) {
     }
 
     //Watch the users location.
-    usersLocationUpdated(data.LatestLocation);
+    usersLocationUpdated(data);
 }
 
-function usersLocationUpdated(position) {
+function usersLocationUpdated(data) {
     var loc = new Microsoft.Maps.Location(
-        position.latitude,
-        position.longitude);
+        data.LatestLocation.latitude,
+        data.LatestLocation.longitude);
 
     //Update the user pushpin.
     userPin.setLocation(loc);
@@ -86,9 +86,29 @@ function usersLocationUpdated(position) {
     map.setView({ center: loc });
 
     //Calculate a new route if one hasn't been calculated or if the users current location is further than 50 meters from the current route.
-    if (!routePath || Microsoft.Maps.SpatialMath.distance(loc, routePath) > 50) {
-        calculateRoute(loc, null);
+    if (!routePath 
+        //|| Microsoft.Maps.SpatialMath.distance(loc, routePath) > 50
+    ) {
+        calculateRoute(loc, data.Waypoints);
     }
+}
+
+function calculateRoute(userLocation, waypoints) {
+    clearDirections();
+
+    //Create waypoints to route between.
+    directionsManager.addWaypoint(new Microsoft.Maps.Directions.Waypoint({ location: userLocation }));
+
+    waypoints.map((x) => {
+        let dest = new Microsoft.Maps.Location(
+            x.latitude,
+            x.longitude);
+    
+        directionsManager.addWaypoint(new Microsoft.Maps.Directions.Waypoint({ location: dest })); 
+    });
+
+    //Calculate directions.
+    directionsManager.calculateDirections();
 }
 
 function stopTracking() {
@@ -98,17 +118,6 @@ function stopTracking() {
     //Remove the user pushpin.
     map.entities.clear();
     clearDirections();
-}
-
-function calculateRoute(userLocation, destination) {
-    clearDirections();
-
-    //Create waypoints to route between.
-    directionsManager.addWaypoint(new Microsoft.Maps.Directions.Waypoint({ location: userLocation }));
-    directionsManager.addWaypoint(new Microsoft.Maps.Directions.Waypoint({ address: "Word trade center, montecito 38, cdmx, mx" }));     
-
-    //Calculate directions.
-    directionsManager.calculateDirections();
 }
 
 function directionsUpdated(e) {
