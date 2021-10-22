@@ -111,6 +111,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="References\Autofac.dll" />
+    <Content Include="References\Microsoft.Extensions.Configuration.Abstractions.dll" />
+    <Content Include="References\Newtonsoft.Json.dll" />
     <Content Include="References\PX.Api.CodeBasedScreen.dll" />
     <Content Include="References\PX.Api.ContractBased.Common.dll" />
     <Content Include="References\PX.Api.ContractBased.dll" />
@@ -119,6 +122,8 @@
     <Content Include="References\PX.Common.dll" />
     <Content Include="References\PX.Common.Std.dll" />
     <Content Include="References\PX.Data.dll" />
+    <Content Include="References\PX.Export.dll" />
+    <Content Include="References\PX.Hosting.dll" />
     <Content Include="References\PX.Objects.dll" />
     <Content Include="References\PX.Objects.FS.dll" />
   </ItemGroup>
