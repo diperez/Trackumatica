@@ -14,7 +14,7 @@ namespace Tracumatica
     public class SetupMaintExt : PXGraphExtension<SetupMaint>
     {
         public static bool IsActive() => true;
-        public const string trackingID = "8206783D-B8B0-487D-9CCA-708724D752DD";
+        public const string trackingID = "3427D34D-30AD-4CB3-8E08-CA79F81DF768";
 
         #region StartRouteApp1
         public PXAction<FSSetup> startRouteApp1;
@@ -40,7 +40,7 @@ namespace Tracumatica
 
                     var today = latestLocationRow.ExecutionDate;
                     if (today == null)
-                        today = DateTime.Now;
+                        today = new DateTime(2021, 10, 22, 0, 0, 0);
 
                     foreach (var point in GeoLocations.app1)
                     {
@@ -101,7 +101,7 @@ namespace Tracumatica
 
                     var today = latestLocationRow.ExecutionDate;
                     if (today == null)
-                        today = DateTime.Now;
+                        today = new DateTime(2021, 10, 22, 0, 0, 0);
 
                     foreach (var point in GeoLocations.app2)
                     {

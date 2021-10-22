@@ -97,7 +97,7 @@ namespace Tracumatica
 
                     //if (secret != "secretValue") return new StatusCodeResult(System.Net.HttpStatusCode.Unauthorized, request);
 
-                    var today = DateTime.Now;
+                    var today = new DateTime(2021, 10, 22, 0, 0, 0);
                     var todayat23 = new DateTime(today.Year, today.Month, today.Day, 23, 59, 59);
                     DayOfWeek dayOfWeek = today.DayOfWeek;
                     Guid? currentTrackingID = null;
