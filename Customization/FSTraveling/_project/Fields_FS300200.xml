@@ -1,0 +1,3 @@
+﻿<Fields ScreenID="FS300200">
+    <Field IsActive="True" IsSystem="False" IsCustomized="True" FieldName="Status" ObjectName="PX.Objects.FS.FSAppointment" ComboBoxValues="SetFromUI|T|Traveling" />
+</Fields>
