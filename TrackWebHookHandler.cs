@@ -48,6 +48,12 @@ namespace Tracumatica
 
     public class Location
     {
+        public Location(string latitude, string longitude)
+        {
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
         public string latitude { get; set; }
         public string longitude { get; set; }
     }
@@ -173,7 +179,8 @@ namespace Tracumatica
                     OrderBy<
                         Desc<FSGPSTrackingHistory.executionDate>>>.SelectWindowed(graph, 0, 1, currentTrackingID);
 
-                    returnLocation.LatestLocation = new Location { latitude = latestLocationRow.Latitude.ToString(), longitude = latestLocationRow.Longitude.ToString() };
+                    if(latestLocationRow != null)
+                        returnLocation.LatestLocation = new Location(latestLocationRow.Latitude.ToString(), latestLocationRow.Longitude.ToString());
 
                     var nextAppointments =
                     PXSelectJoin<EPEmployee,
@@ -203,7 +210,7 @@ namespace Tracumatica
                     foreach (PXResult<EPEmployee, FSAppointmentEmployee, FSAppointment, Users> row in nextAppointments)
                     {
                         FSAppointment app = (FSAppointment)row;
-                        returnLocation.Waypoints.Add(new Location { latitude = app.MapLatitude.ToString(), longitude = app.MapLongitude.ToString() });
+                        returnLocation.Waypoints.Add(new Location(app.MapLatitude.ToString(), app.MapLongitude.ToString()));
                     }
 
                     return new JsonTextActionResult(request, JsonConvert.SerializeObject(returnLocation));

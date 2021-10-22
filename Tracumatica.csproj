@@ -128,8 +128,10 @@
     <Content Include="References\PX.Objects.FS.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FS\GraphExtensions\SetupMaintExt.cs" />
     <Compile Include="FS\GraphExtensions\AppointmentEntryExt.cs" />
     <Compile Include="Registration.cs" />
+    <Compile Include="Static\GeoLocations.cs" />
     <Compile Include="TrackWebHookHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
