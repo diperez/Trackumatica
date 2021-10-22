@@ -35,8 +35,16 @@
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Autofac">
+      <HintPath>..\..\Sites\Trackumatica\Bin\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Sites\Trackumatica\Bin\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Sites\Trackumatica\Bin\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PX.Api.CodeBasedScreen, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -69,6 +77,12 @@
     <Reference Include="PX.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3b136cac2f602b8e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>References\PX.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="PX.Export">
+      <HintPath>..\..\Sites\Trackumatica\Bin\PX.Export.dll</HintPath>
+    </Reference>
+    <Reference Include="PX.Hosting">
+      <HintPath>..\..\Sites\Trackumatica\Bin\PX.Hosting.dll</HintPath>
     </Reference>
     <Reference Include="PX.Objects, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -109,11 +123,8 @@
     <Content Include="References\PX.Objects.FS.dll" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="FS\GraphExtensions\AppointmentEntryExt.cs" />
+    <Compile Include="Registration.cs" />
     <Compile Include="TrackWebHookHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
