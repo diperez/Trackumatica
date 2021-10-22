@@ -5,7 +5,7 @@ Share live tracking for technicians between traveling in Appointments.
 - Map used is Bing Maps
 - Route will behave like GPS app, EG: Waze.
 - Reading the latest location is done used webhooks.
-- Map is hosted in same Acumatica repo and can be share via links wihtout authentication needed.
+- Map is hosted in same Acumatica instace and can be share via links wihtout authentication needed.
 
 
 
